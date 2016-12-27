@@ -4,7 +4,3 @@
   
           echo "export GIT_USER=MyUsername" > /etc/gitPasswd
           echo "export GIT_PASSWORD=MyPassword" >> /etc/gitPasswd
-
-        
-        
-        
