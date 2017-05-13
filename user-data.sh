@@ -14,7 +14,7 @@ service go-server stop
 curl -s -L https://github.com/ashwanthkumar/gocd-slack-build-notifier/releases/download/v1.4.0-RC10/gocd-slack-notifier-1.4.0-RC10.jar -o /var/lib/go-server/plugins/external/gocd-slack-notifier-1.4.0-RC10.jar
 curl -s -L https://github.com/tomzo/gocd-yaml-config-plugin/releases/download/0.4.0/yaml-config-plugin-0.4.0.jar -o /var/lib/go-server/plugins/external/yaml-config-plugin-0.4.0.jar
 curl -s -L https://github.com/gocd-contrib/script-executor-task/releases/download/0.3/script-executor-0.3.0.jar -o /var/lib/go-server/plugins/external/script-executor-0.3.0.jar
-htpasswd -bcs /etc/go/htpasswd admin admin
+htpasswd -bcs /etc/go/htpasswd $GO_USER $GO_PW
 git clone https://github.com/tj/n
 cd n
 make install
@@ -40,7 +40,7 @@ echo -e "<?xml version=\"1.0\" encoding=\"utf-8\"?>
   </server>
   <config-repos>
     <config-repo plugin=\"yaml.config.plugin\">
-      <git url=\"https://git-codecommit.us-east-1.amazonaws.com/v1/repos/mixcode-vision-api\" branch=\"development\" />
+      <git url=\"$REPO_URL\" branch=\"development\" />
     </config-repo>
   </config-repos>
 </cruise>" | tee /etc/go/cruise-config.xml
