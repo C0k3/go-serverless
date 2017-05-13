@@ -8,11 +8,12 @@ gpgcheck = 1
 gpgkey   = https://download.go.cd/GOCD-GPG-KEY.asc
 " | tee /etc/yum.repos.d/gocd.repo
 yum update
-yum install -y go-server httpd-tools git
+yum remove -y java-1.7.0-openjdk
+yum install -y go-server httpd-tools git java-1.8.0-openjdk
 service go-server stop
-curl -s -L https://github.com/ashwanthkumar/gocd-slack-build-notifier/releases/download/v1.4.0-RC7/gocd-slack-notifier-1.4.0-RC7.jar -o /var/lib/go-server/plugins/external/gocd-slack-notifier-1.4.0-RC7.jar
-curl -s -L https://github.com/tomzo/gocd-yaml-config-plugin/releases/download/0.2.0/yaml-config-plugin-0.2.0.jar -o /var/lib/go-server/plugins/external/yaml-config-plugin-0.2.0.jar
-curl -s -L https://github.com/gocd-contrib/script-executor-task/releases/download/0.2/script-executor-0.2.jar -o /var/lib/go-server/plugins/external/script-executor-0.2.jar
+curl -s -L https://github.com/ashwanthkumar/gocd-slack-build-notifier/releases/download/v1.4.0-RC10/gocd-slack-notifier-1.4.0-RC10.jar -o /var/lib/go-server/plugins/external/gocd-slack-notifier-1.4.0-RC10.jar
+curl -s -L https://github.com/tomzo/gocd-yaml-config-plugin/releases/download/0.4.0/yaml-config-plugin-0.4.0.jar -o /var/lib/go-server/plugins/external/yaml-config-plugin-0.4.0.jar
+curl -s -L https://github.com/gocd-contrib/script-executor-task/releases/download/0.3/script-executor-0.3.0.jar -o /var/lib/go-server/plugins/external/script-executor-0.3.0.jar
 htpasswd -bcs /etc/go/htpasswd admin admin
 git clone https://github.com/tj/n
 cd n
@@ -20,10 +21,13 @@ make install
 cd ..
 rm -rf n
 /usr/local/bin/n stable
-/usr/local/bin/npm install lodash co-sleep co co-parallel co-request aws-sdk js-yaml forever http-server stanza -g
+/usr/local/bin/npm install lodash co-sleep co co-parallel co-request aws-sdk js-yaml forever http-server stanza serverless -g
 
-# /etc/gitPassword sets $GIT_USERNAME and $GIT_PASSWORD env vars used in the gocd pipeline
-aws s3 cp s3://go-serverless/gitPassword /etc/gitPassword || true
+echo '
+[credential]
+        helper = !aws codecommit credential-helper $@
+        UseHttpPath = true
+' | tee /etc/gitconfig
 
 echo -e "<?xml version=\"1.0\" encoding=\"utf-8\"?>
 <cruise xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"
@@ -32,17 +36,17 @@ echo -e "<?xml version=\"1.0\" encoding=\"utf-8\"?>
      commandRepositoryLocation=\"default\" serverId=\"c8beb214-61b9-4f1c-b4d9-f32942ed93b5\">
      <security>
        <passwordFile path=\"/etc/go/htpasswd\" />
-     </security>
+     </security> 
   </server>
   <config-repos>
     <config-repo plugin=\"yaml.config.plugin\">
-      <git url=\"https://github.com/C0k3/session\" branch=\"master\" />
+      <git url=\"https://git-codecommit.us-east-1.amazonaws.com/v1/repos/mixcode-vision-api\" branch=\"development\" />
     </config-repo>
   </config-repos>
 </cruise>" | tee /etc/go/cruise-config.xml
 echo "export PATH=/usr/local/bin:node_modules/.bin:\$PATH" | tee /etc/profile.d/go.sh
+chown go:go /etc/go/cruise-config.xml
+chown go:go /etc/go/htpasswd
 yum install -y go-agent
 service go-server start
 service go-agent start
-
-
