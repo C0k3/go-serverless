@@ -1,4 +1,9 @@
 #!/bin/bash
+
+# get value of REPO_URL tag on the instance
+# this is the repo path that stores pipelines.gocd.yaml file
+instanceId=$(curl http://169.254.169.254/latest/meta-data/instance-id)
+pipelineRepo=$(aws --region us-east-1 ec2 describe-tags --filters "Name=resource-id,Values=${instanceId}" | grep -2 REPO_URL | grep Value | tr -d ' ' | cut -f2-3 -d: | tr -d '"' | tr -d ',')
 echo "
 [gocd]
 name     = GoCD YUM Repository
@@ -7,7 +12,7 @@ enabled  = 1
 gpgcheck = 1
 gpgkey   = https://download.go.cd/GOCD-GPG-KEY.asc
 " | tee /etc/yum.repos.d/gocd.repo
-yum update
+yum update -y
 yum remove -y java-1.7.0-openjdk
 yum install -y go-server httpd-tools git java-1.8.0-openjdk
 service go-server stop
@@ -40,7 +45,7 @@ echo -e "<?xml version=\"1.0\" encoding=\"utf-8\"?>
   </server>
   <config-repos>
     <config-repo plugin=\"yaml.config.plugin\">
-      <git url=\"$REPO_URL\" branch=\"development\" />
+      <git url=\"${pipelineRepo}\" branch=\"master\" />
     </config-repo>
   </config-repos>
 </cruise>" | tee /etc/go/cruise-config.xml
