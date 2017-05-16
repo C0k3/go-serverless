@@ -16,9 +16,12 @@ yum update -y
 yum remove -y java-1.7.0-openjdk
 yum install -y go-server httpd-tools git java-1.8.0-openjdk
 service go-server stop
-curl -s -L https://github.com/ashwanthkumar/gocd-slack-build-notifier/releases/download/v1.4.0-RC10/gocd-slack-notifier-1.4.0-RC10.jar -o /var/lib/go-server/plugins/external/gocd-slack-notifier-1.4.0-RC10.jar
-curl -s -L https://github.com/tomzo/gocd-yaml-config-plugin/releases/download/0.4.0/yaml-config-plugin-0.4.0.jar -o /var/lib/go-server/plugins/external/yaml-config-plugin-0.4.0.jar
-curl -s -L https://github.com/gocd-contrib/script-executor-task/releases/download/0.3/script-executor-0.3.0.jar -o /var/lib/go-server/plugins/external/script-executor-0.3.0.jar
+echo "getting slack plugin"
+curl -L https://github.com/ashwanthkumar/gocd-slack-build-notifier/releases/download/v1.4.0-RC10/gocd-slack-notifier-1.4.0-RC10.jar -o /var/lib/go-server/plugins/external/gocd-slack-notifier-1.4.0-RC10.jar
+echo "getting yaml pipeline plugin"
+curl -L https://github.com/tomzo/gocd-yaml-config-plugin/releases/download/0.4.0/yaml-config-plugin-0.4.0.jar -o /var/lib/go-server/plugins/external/yaml-config-plugin-0.4.0.jar
+echo "getting script-executor plugin"
+curl -L https://github.com/gocd-contrib/script-executor-task/releases/download/0.3/script-executor-0.3.0.jar -o /var/lib/go-server/plugins/external/script-executor-0.3.0.jar
 htpasswd -bcs /etc/go/htpasswd $GO_USER $GO_PW
 git clone https://github.com/tj/n
 cd n
