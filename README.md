@@ -1,6 +1,12 @@
-1. Copy the contents of this file into the UserData field of your Amazon Linux instance during the install to automatically install the Go Server and Agent
-  1. When copying, replace the https://github.com/C0k3/session with the Git location of your serverless code
-  1. If you have a private repo then put then either use an s3 object to store them as shown or just ehco the variables into the file such as:
-  
-          echo "export GIT_USER=MyUsername" > /etc/gitPasswd
-          echo "export GIT_PASSWORD=MyPassword" >> /etc/gitPasswd
+## Seup GO.cd for AWS CodeCOmmit
+
+Prerequisites:
+
+* Your Amazon EC2 instance role must have full access to CodeCommit
+  * Attaching the AWSCodeCommitFullAcces policy will work. More info about CodeCommit polices here: http://docs.aws.amazon.com/codecommit/latest/userguide/auth-and-access-control-iam-identity-based-access-control.html
+* You will need to put the https path to your repo in an environment variable called REPO_URL
+
+Copy the contents of this file into the UserData field of your Amazon Linux instance to automatically install the Go Server and Agent as well as a couple of plugins:
+
+* [Slack Build Notifier](https://github.com/ashwanthkumar/gocd-slack-build-notifier)
+* [Yaml Pipeline Configuration](https://github.com/tomzo/gocd-yaml-config-plugin)
