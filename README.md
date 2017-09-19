@@ -1,4 +1,4 @@
-## Seup GO.cd for AWS CodeCOmmit
+## Seup GO.cd for AWS CodeCommit
 
 Prerequisites:
 
