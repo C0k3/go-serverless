@@ -1,4 +1,6 @@
-## Seup GO.cd for AWS CodeCommit
+## Seup GO.cd for serverless CI/CD with AWS CodeCommit
+
+This UserData script will configure an Amazon EC2 instance to run a GO.cd pipeline to deploy applications build with the [Serverless Framework](https://serverless.com)
 
 Prerequisites:
 
